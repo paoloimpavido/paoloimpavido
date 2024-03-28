@@ -1,37 +1,28 @@
-{{- $svgBundle := partialCached "svg-bundle" . -}}
-
 <!DOCTYPE html>
-<html lang="{{ .Site.Language.Lang }}" data-mode="{{ if .Site.Params.Style.isDark }}dark{{ else }}light{{ end }}">
-  <head prefix="og: http://ogp.me/ns#">
-    {{ partial "head" . }}
-  </head>
+<html lang="{{ site.Language.LanguageCode }}">
 
-  <body>
+<head>
+  {{ block "load_paginator" . }}{{ end }}
+  {{ partial "meta.html" . }}
+  {{ partial "title.html" . }}
+  {{ partial "link.html" . }}
+  {{ partial "load_site_assets.html" . }}
+  {{ block "load_page_assets" . }}
+    {{ with .Content }}{{ end }}
+  {{ end }}
+  {{ partial "assets.html" . }}
+</head>
 
-    <header>
-      {{ partialCached "header" . }}
-    </header>
-
-    <div class="filler">
-      {{ block "main" . }}
-        <!-- Stuff -->
-      {{ end }}
+<body>
+  {{ partialCached "banner.html" . }}
+  <main>
+    <div class="u-wrapper">
+      <div class="u-padding">
+        {{ block "main" . }}{{ end }}
+      </div>
     </div>
-    
-    <footer>
-      {{ partial "footer" . }}
-    </footer>
-    
-    <!-- Search -->
-    {{ if eq .Layout "search" }}
-      {{ $searchJS := resources.Get "js/search.js" | resources.ExecuteAsTemplate (print "js/search.js" | relLangURL) . | minify | fingerprint }}
-      <script async type="module" src="{{ $searchJS.Permalink }}" integrity="{{ $searchJS.Data.Integrity }}" crossorigin="anonymous"></script>
-    {{ end }}
+  </main>
+  {{ partialCached "footer.html" . }}
+</body>
 
-    <!-- KaTeX -->
-    {{ if or .Params.katex .Site.Params.katex .Params.math .Site.Params.math }}
-      {{ partial "katex" . }}
-    {{ end }}
-
-  </body>
 </html>
